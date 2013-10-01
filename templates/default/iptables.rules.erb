@@ -1,0 +1,8 @@
+*filter
+<%node['rackspace-iptables']['chains'].keys.each do |chain| -%>
+:<%=chain%> <%="#{node['rackspace-iptables']['chains'][chain]}"%>
+<%end%>
+<%node['rackspace-iptables']['rules'].each do |line| -%>
+<%=line%>
+<%end%>
+COMMIT
