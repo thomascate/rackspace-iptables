@@ -1,6 +1,6 @@
 *filter
-<%node['rackspace-iptables']['chains'].keys.each do |chain| -%>
-:<%=chain%> <%="#{node['rackspace-iptables']['chains'][chain]}"%>
+<%node['rackspace-iptables']['chains'].each_pair do |chain, value| -%>
+:<%=chain%> <%=value%>
 <%end%>
 <%node['rackspace-iptables']['rules'].each do |line| -%>
 <%=line%>
