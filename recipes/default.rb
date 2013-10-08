@@ -37,16 +37,16 @@ if platform_family?(%w{debian})
   end
 
   execute "iptablesload" do
-  	command "/etc/network/if-pre-up.d/iptablesload"
-  	:nothing
+    command "/etc/network/if-pre-up.d/iptablesload"
+    action :nothing
   end
 
   template "/etc/iptables.rules" do
-  	source "iptables.rules.erb"
-  	owner "root"
-  	group "root"
-  	mode "0600"
-  	notifies :run, "execute[iptablesload]"
+    source "iptables.rules.erb"
+    owner "root"
+    group "root"
+    mode "0600"
+    notifies :run, "execute[iptablesload]"
   end
 
 end
