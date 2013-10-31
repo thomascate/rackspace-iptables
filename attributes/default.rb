@@ -16,7 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+default['rackspace-iptables']['nat_rules'] = []
+default['rackspace-iptables']['nat_chains'] = {
+  "PREROUTING"  => "ACCEPT",
+  "POSTROUTING" => "ACCEPT",
+  "OUTPUT"      => "ACCEPT"
+}
 
 default['rackspace-iptables']['rules']  = []
 default['rackspace-iptables']['chains'] = {

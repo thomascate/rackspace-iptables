@@ -1,3 +1,11 @@
+*nat
+<%node['rackspace-iptables']['nat_chains'].each_pair do |chain, value| -%>
+:<%=chain%> <%=value%>
+<%end%>
+<%node['rackspace-iptables']['nat_rules'].each do |line| -%>
+<%=line%>
+<%end%>
+COMMIT
 *filter
 <%node['rackspace-iptables']['chains'].each_pair do |chain, value| -%>
 :<%=chain%> <%=value%>

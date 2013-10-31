@@ -49,4 +49,18 @@ if platform_family?(%w{debian})
     notifies :run, "execute[iptablesload]"
   end
 
+elsif platform_family?(%w{rhel})
+
+  service "iptables" do
+    action :enable
+  end
+
+  template "/etc/sysconfig/iptables" do
+    source "iptables.rules.erb"
+    owner "root"
+    group "root"
+    mode "0600"
+    notifies :restart, "service[iptables]"
+  end
+
 end
