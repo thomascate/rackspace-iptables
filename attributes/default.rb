@@ -17,8 +17,8 @@
 # limitations under the License.
 #
 default['rackspace-iptables']['chains']['INPUT'] = {
-  "-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT" => 2,
-  "-A INPUT -s 0.0.0.0/0 -j REJECT" => 1
+  '-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -m comment --comment "Allow established connections" -j ACCEPT' => 2,
+  '-A INPUT -s 0.0.0.0/0 -m comment --comment "Reject all unspecified traffic"-j REJECT' => 1
 }
 
 default['rackspace-iptables']['chains']['OUTPUT'] = {}
