@@ -16,16 +16,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-default['rackspace-iptables']['nat_rules'] = []
-default['rackspace-iptables']['nat_chains'] = {
-  "PREROUTING"  => "ACCEPT",
-  "POSTROUTING" => "ACCEPT",
-  "OUTPUT"      => "ACCEPT"
+default['rackspace-iptables']['chains']['INPUT'] = {
+  "-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT" => 2,
+  "-A INPUT -s 0.0.0.0/0 -j REJECT" => 1
 }
 
-default['rackspace-iptables']['rules']  = []
-default['rackspace-iptables']['chains'] = {
-  "INPUT"   => "ACCEPT",
-  "OUTPUT"  => "ACCEPT",
-  "FORWARD" => "ACCEPT"
- }
+default['rackspace-iptables']['chains']['OUTPUT'] = {}
+default['rackspace-iptables']['chains']['FORWARD'] = {}
+default['rackspace-iptables']['chains']['PREROUTING'] = {}
+default['rackspace-iptables']['chains']['POSTROUTING'] = {}
+
