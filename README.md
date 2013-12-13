@@ -20,6 +20,11 @@ default['rackspace-iptables']['chains']['OUTPUT'] = {}
 default['rackspace-iptables']['chains']['FORWARD'] = {}
 default['rackspace-iptables']['chains']['PREROUTING'] = {}
 default['rackspace-iptables']['chains']['POSTROUTING'] = {}
+  
+  
+To update add a rule within a cookbook without destroying the whole chain, do something like this.
+
+node.default['rackspace-iptables']['chains']['INPUT']['-A INPUT -p tcp -m tcp --dport 80 -j ACCEPT'] = 50
 
 # Author
 
