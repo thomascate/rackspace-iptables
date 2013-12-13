@@ -1,16 +1,26 @@
 *nat
-<%node['rackspace-iptables']['nat_chains'].each_pair do |chain, value| -%>
-:<%=chain%> <%=value%>
-<%end%>
-<%node['rackspace-iptables']['nat_rules'].each do |line| -%>
-<%=line%>
-<%end%>
+:PREROUTING ACCEPT 
+:INPUT ACCEPT
+:OUTPUT ACCEPT
+:POSTROUTING ACCEPT [
+<%@PREROUTING.each do |rule| -%>
+<%=rule[0]%>
+<% end -%>
+<%@POSTROUTING.each do |rule| -%>
+<%=rule[0]%>
+<% end -%>
 COMMIT
 *filter
-<%node['rackspace-iptables']['chains'].each_pair do |chain, value| -%>
-:<%=chain%> <%=value%>
-<%end%>
-<%node['rackspace-iptables']['rules'].each do |line| -%>
-<%=line%>
-<%end%>
+:INPUT ACCEPT
+:FORWARD ACCEPT
+:OUTPUT ACCEPT
+<%@INPUT.each do |rule| -%>
+<%=rule[0]%>
+<% end -%>
+<%@FORWARD.each do |rule| -%>
+<%=rule[0]%>
+<% end -%>
+<%@OUTPUT.each do |rule| -%>
+<%=rule[0]%>
+<% end -%>
 COMMIT
