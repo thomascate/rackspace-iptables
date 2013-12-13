@@ -16,11 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+default['rackspace-iptables']['chains']['INPUT'] = {}
+default['rackspace-iptables']['chains']['OUTPUT'] = {}
+default['rackspace-iptables']['chains']['FORWARD'] = {}
+default['rackspace-iptables']['chains']['PREROUTING'] = {}
+default['rackspace-iptables']['chains']['POSTROUTING'] = {}
 
-
-default['rackspace-iptables']['rules']  = []
-default['rackspace-iptables']['chains'] = {
-  "INPUT"   => "ACCEPT",
-  "OUTPUT"  => "ACCEPT",
-  "FORWARD" => "ACCEPT"
- }

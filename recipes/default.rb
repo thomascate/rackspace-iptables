@@ -22,31 +22,41 @@ if platform_family?(%w{debian})
   	action :disable
   end
 
-  template "/etc/network/if-pre-up.d/iptablesload" do
-  	source "iptablesload.erb"
-  	owner "root"
-  	owner "root"
-  	mode "0700"
+  package "iptables-persistent" do
+    action :install
   end
 
-  template "/etc/network/if-pre-up.d/iptablessave" do
-  	source "iptablessave.erb"
-  	owner "root"
-  	owner "root"
-  	mode "0700"
+  service "iptables-persistent" do
+    action :enable
   end
 
-  execute "iptablesload" do
-    command "/etc/network/if-pre-up.d/iptablesload"
-    action :nothing
-  end
-
-  template "/etc/iptables.rules" do
+  template "/etc/iptables/rules.v4" do
     source "iptables.rules.erb"
     owner "root"
     group "root"
     mode "0600"
-    notifies :run, "execute[iptablesload]"
+    variables lazy{{
+      :INPUT => node['rackspace-iptables']['chains']['INPUT'].sort_by {|rule, weight| weight}.reverse,
+      :OUTPUT => node['rackspace-iptables']['chains']['OUTPUT'].sort_by {|rule, weight| weight}.reverse,
+      :FORWARD => node['rackspace-iptables']['chains']['FORWARD'].sort_by {|rule, weight| weight}.reverse,
+      :PREROUTING => node['rackspace-iptables']['chains']['PREROUTING'].sort_by {|rule, weight| weight}.reverse,
+      :POSTROUTING => node['rackspace-iptables']['chains']['POSTROUTING'].sort_by {|rule, weight| weight}.reverse
+    }}
+    notifies :restart, "service[iptables-persistent]"
+  end
+
+elsif platform_family?(%w{rhel})
+
+  service "iptables" do
+    action :enable
+  end
+
+  template "/etc/sysconfig/iptables" do
+    source "iptables.rules.erb"
+    owner "root"
+    group "root"
+    mode "0600"
+    notifies :restart, "service[iptables]"
   end
 
 end
