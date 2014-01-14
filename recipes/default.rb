@@ -36,11 +36,11 @@ if platform_family?(%w{debian})
     group "root"
     mode "0600"
     variables lazy{{
-      :INPUT => node['rackspace-iptables']['chains']['INPUT'].sort_by {|rule, weight| weight}.reverse,
-      :OUTPUT => node['rackspace-iptables']['chains']['OUTPUT'].sort_by {|rule, weight| weight}.reverse,
-      :FORWARD => node['rackspace-iptables']['chains']['FORWARD'].sort_by {|rule, weight| weight}.reverse,
-      :PREROUTING => node['rackspace-iptables']['chains']['PREROUTING'].sort_by {|rule, weight| weight}.reverse,
-      :POSTROUTING => node['rackspace-iptables']['chains']['POSTROUTING'].sort_by {|rule, weight| weight}.reverse
+      :INPUT => node[:'rackspace-iptables'][:config][:chains][:INPUT],
+      :OUTPUT => node[:'rackspace-iptables'][:config][:chains][:OUTPUT],
+      :FORWARD => node[:'rackspace-iptables'][:config][:chains][:FORWARD],
+      :PREROUTING => node[:'rackspace-iptables'][:config][:chains][:PREROUTING],
+      :POSTROUTING => node[:'rackspace-iptables'][:config][:chains][:POSTROUTING]
     }}
     notifies :restart, "service[iptables-persistent]"
   end
@@ -57,11 +57,11 @@ elsif platform_family?(%w{rhel})
     group "root"
     mode "0600"
     variables lazy{{
-      :INPUT => node['rackspace-iptables']['chains']['INPUT'].sort_by {|rule, weight| weight}.reverse,
-      :OUTPUT => node['rackspace-iptables']['chains']['OUTPUT'].sort_by {|rule, weight| weight}.reverse,
-      :FORWARD => node['rackspace-iptables']['chains']['FORWARD'].sort_by {|rule, weight| weight}.reverse,
-      :PREROUTING => node['rackspace-iptables']['chains']['PREROUTING'].sort_by {|rule, weight| weight}.reverse,
-      :POSTROUTING => node['rackspace-iptables']['chains']['POSTROUTING'].sort_by {|rule, weight| weight}.reverse
+      :INPUT => node[:'rackspace-iptables'][:config][:chains][:INPUT],
+      :OUTPUT => node[:'rackspace-iptables'][:config][:chains][:OUTPUT],
+      :FORWARD => node[:'rackspace-iptables'][:config][:chains][:FORWARD],
+      :PREROUTING => node[:'rackspace-iptables'][:config][:chains][:PREROUTING],
+      :POSTROUTING => node[:'rackspace-iptables'][:config][:chains][:POSTROUTING]
     }}
     notifies :restart, "service[iptables]"
   end
