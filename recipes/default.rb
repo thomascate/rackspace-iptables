@@ -31,7 +31,7 @@ if platform_family?(%w{debian})
   end
 
   template "/etc/iptables/rules.v4" do
-    cookbok node[:'rackspace-iptables'][:main][:rules_template]
+    cookbok node[:'rackspace-iptables'][:templates_cookbook][:rules]
     source "iptables.rules.erb"
     owner "root"
     group "root"
@@ -53,7 +53,7 @@ elsif platform_family?(%w{rhel})
   end
 
   template "/etc/sysconfig/iptables" do
-    cookbok node[:'rackspace-iptables'][:main][:rules_template]
+    cookbok node[:'rackspace-iptables'][:templates_cookbook][:rules]
     source "iptables.rules.erb"
     owner "root"
     group "root"

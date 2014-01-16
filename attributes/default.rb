@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-default[:'rackspace-iptables'][:main][:rules_template] = 'rackspace-iptables'
+default[:'rackspace-iptables'][:templates_cookbook][:rules] = 'rackspace-iptables'
 default[:'rackspace-iptables'][:chains][:INPUT] = {}
 default[:'rackspace-iptables'][:chains][:OUTPUT] = {}
 default[:'rackspace-iptables'][:chains][:FORWARD] = {}
