@@ -31,16 +31,17 @@ if platform_family?(%w{debian})
   end
 
   template "/etc/iptables/rules.v4" do
+    cookbok node['rackspace-iptables']['templates_cookbook']['rules']
     source "iptables.rules.erb"
     owner "root"
     group "root"
     mode "0600"
     variables lazy{{
-      :INPUT => node['rackspace-iptables']['chains']['INPUT'].sort_by {|rule, weight| weight}.reverse,
-      :OUTPUT => node['rackspace-iptables']['chains']['OUTPUT'].sort_by {|rule, weight| weight}.reverse,
-      :FORWARD => node['rackspace-iptables']['chains']['FORWARD'].sort_by {|rule, weight| weight}.reverse,
-      :PREROUTING => node['rackspace-iptables']['chains']['PREROUTING'].sort_by {|rule, weight| weight}.reverse,
-      :POSTROUTING => node['rackspace-iptables']['chains']['POSTROUTING'].sort_by {|rule, weight| weight}.reverse
+      :INPUT => node['rackspace-iptables']['config']['chains']['INPUT'],
+      :OUTPUT => node['rackspace-iptables']['config']['chains']['OUTPUT'],
+      :FORWARD => node['rackspace-iptables']['config']['chains']['FORWARD'],
+      :PREROUTING => node['rackspace-iptables']['config']['chains']['PREROUTING'],
+      :POSTROUTING => node['rackspace-iptables']['config']['chains']['POSTROUTING']
     }}
     notifies :restart, "service[iptables-persistent]"
   end
@@ -52,16 +53,17 @@ elsif platform_family?(%w{rhel})
   end
 
   template "/etc/sysconfig/iptables" do
+    cookbok node['rackspace-iptables']['templates_cookbook']['rules']
     source "iptables.rules.erb"
     owner "root"
     group "root"
     mode "0600"
     variables lazy{{
-      :INPUT => node['rackspace-iptables']['chains']['INPUT'].sort_by {|rule, weight| weight}.reverse,
-      :OUTPUT => node['rackspace-iptables']['chains']['OUTPUT'].sort_by {|rule, weight| weight}.reverse,
-      :FORWARD => node['rackspace-iptables']['chains']['FORWARD'].sort_by {|rule, weight| weight}.reverse,
-      :PREROUTING => node['rackspace-iptables']['chains']['PREROUTING'].sort_by {|rule, weight| weight}.reverse,
-      :POSTROUTING => node['rackspace-iptables']['chains']['POSTROUTING'].sort_by {|rule, weight| weight}.reverse
+      :INPUT => node['rackspace-iptables']['config']['chains']['INPUT'],
+      :OUTPUT => node['rackspace-iptables']['config']['chains']['OUTPUT'],
+      :FORWARD => node['rackspace-iptables']['config']['chains']['FORWARD'],
+      :PREROUTING => node['rackspace-iptables']['config']['chains']['PREROUTING'],
+      :POSTROUTING => node['rackspace-iptables']['config']['chains']['POSTROUTING']
     }}
     notifies :restart, "service[iptables]"
   end
