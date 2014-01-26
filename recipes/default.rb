@@ -16,17 +16,25 @@
 # limitations under the License.
 #
 
-if platform_family?(%w{debian})
+case node['platform']
+when 'ubuntu'
 
   service 'ufw' do
-    action :disable
+    provider Chef::Provider::Service::Upstart
+    action [:stop, :disable]
   end
 
   package_name = 'iptables-persistent'
   service_name = 'iptables-persistent'
   rules_file = '/etc/iptables/rules.v4'
 
-elsif platform_family?(%w{rhel})
+when 'debian'
+
+  package_name = 'iptables-persistent'
+  service_name = 'iptables-persistent'
+  rules_file = '/etc/iptables/rules.v4'
+
+when 'redhat', 'centos', 'amazon', 'scientific'
 
   service_name = 'iptables'
   rules_file = '/etc/sysconfig/iptables'
@@ -48,7 +56,7 @@ template rules_file do
   owner 'root'
   group 'root'
   mode '0600'
-  variables lazy{
+  variables lazy {
     {
       INPUT: node['rackspace_iptables']['config']['chains']['INPUT'],
       OUTPUT: node['rackspace_iptables']['config']['chains']['OUTPUT'],
@@ -59,3 +67,8 @@ template rules_file do
   }
   notifies :restart, "service[#{service_name}]"
 end
+
+service service_name do
+  action [:enable, :start]
+end
+

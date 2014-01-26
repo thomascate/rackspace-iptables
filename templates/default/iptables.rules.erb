@@ -22,7 +22,7 @@ COMMIT
 <%unless @INPUT.nil? -%>
 <%  inputSorted = @INPUT.sort_by {|key,value| value['weight']}.reverse %>
 <%  inputSorted.each do |rule| -%> 
--A INPUT <%=rule[0]%> -m comment --comment "<%=rule[1]['comment']%>"
+-A INPUT <%=rule[0]%> <%="-m comment --comment \"#{rule[1]['comment']}\"" if rule[1]['comment']%>
 <%  end -%>
 <%end -%>
 <%unless @FORWARD.nil? -%>
