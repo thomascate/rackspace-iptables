@@ -58,7 +58,7 @@ template rules_file do
 end
 
 service service_name do
-  supports status: true, restart: true 
+  supports status: true, restart: true
   status_command "iptables -L | egrep -v '^(Chain|target|$)'" if node['platform_family'] == 'debian'
   action :start
 end
