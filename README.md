@@ -8,7 +8,7 @@ Requirements
 ------------
 Chef version 0.11.6+.
 
-## Platforms
+### Platforms
 This cookbook has been tested on:
 
 * Debian 7.2
@@ -17,12 +17,12 @@ This cookbook has been tested on:
 
 It may or may not behave as expected on other versions of these distributions.
 
-## Cookbooks
+### Cookbooks
 This cookbook has no dependencies.
 
 Usage
 ------------
-#3# Include the default recipe
+### Include the default recipe
 Some recipe in your run list must include the iptables recipe:
 
 `include_recipe 'rackspace_iptables'`
