@@ -86,6 +86,7 @@ If you want to add multiple rules for each node returned in a search, you may pa
 `search_add_iptables_rules('node:*web*', 'INPUT', ['-p tcp --dport 3306 -j ACCEPT', '-p tcp --dport 22 -j ACCEPT'], 70, 'web nodes')`
 
 This avoids searching the Chef server an unnecessary number of times.
+
 ---
 Please read the `add_iptables_rule` and `search_add_iptables_rules` functions in `libraries/helpers.rb` to determine if they satisfy your use case. If not, you can manually define your rules.
 
