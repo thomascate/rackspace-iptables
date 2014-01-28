@@ -17,18 +17,11 @@
 #
 
 case node['platform']
-when 'ubuntu'
+when 'ubuntu', 'debian'
 
-  service 'ufw' do
-    provider Chef::Provider::Service::Upstart
-    action [:stop, :disable]
+  package 'ufw' do
+    action :remove
   end
-
-  package_name = 'iptables-persistent'
-  service_name = 'iptables-persistent'
-  rules_file = '/etc/iptables/rules.v4'
-
-when 'debian'
 
   package_name = 'iptables-persistent'
   service_name = 'iptables-persistent'
@@ -44,10 +37,6 @@ end
 package package_name do
   action :install
   only_if { package_name }
-end
-
-service service_name do
-  action :enable
 end
 
 template rules_file do
@@ -69,6 +58,6 @@ template rules_file do
 end
 
 service service_name do
-  action [:enable, :start]
+  action :start
 end
 
