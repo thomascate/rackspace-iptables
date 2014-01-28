@@ -1,11 +1,11 @@
-# rackspace_iptables cookbook
+## rackspace_iptables cookbook
 
 The rackspace_iptables cookbook manages all iptables rules for a node. The user adds rules by including the rackspace_iptables default recipe in some node-specific or environment-specific recipe (i.e. a 'rolebook') and defining rules via the data structure `node['rackspace_iptables']['config']['chains']`. If a user includes this cookbook but does not define any rules, the default recipe will overwrite existing iptables configuration with an empty rule list.
 
 Obviously this cookbook should not be used in environments where iptables is managed by other means (e.g. RackConnect).
 
 Requirements
-------------
+--------
 Chef version 0.11.6+.
 
 ### Platforms
@@ -21,7 +21,7 @@ It may or may not behave as expected on other versions of these distributions.
 This cookbook has no dependencies.
 
 Usage
-------------
+--------
 ### Include the default recipe
 Some recipe in your run list must include the iptables recipe:
 
@@ -52,7 +52,7 @@ They will be written to the iptables rules file as follows:
 ```
 
 ##### convenience function
-You may use the following convenience function to more succinctly define rules:
+You may use the following function to more succinctly define rules:
 
 `add_iptables_rule('INPUT', '-s 10.0.0.1 -p tcp --dport 22 -j ACCEPT', 50, 'allow ssh')`
 
@@ -86,18 +86,17 @@ If you want to add multiple rules for each node returned in a search, you may pa
 `search_add_iptables_rules('node:*web*', 'INPUT', ['-p tcp --dport 3306 -j ACCEPT', '-p tcp --dport 22 -j ACCEPT'], 70, 'web nodes')`
 
 This avoids searching the Chef server an unnecessary number of times.
-
-
+---
 Please read the `add_iptables_rule` and `search_add_iptables_rules` functions in `libraries/helpers.rb` to determine if they satisfy your use case. If not, you can manually define your rules.
 
 Recipes
-------------
-## default
+--------
+### default
 
 * Uninstalls 'ufw' if installed (e.g. on Ubuntu)
 * Installs iptables packages if not installed
 * Builds the iptables rules file from `node['rackspace_iptables']['config']['chains']`
-* Loads iptables rules if not loaded or if rules file has changed
+* Loads iptables rules if not loaded or if the rules file has changed
 
 License & Authors
 ------------
