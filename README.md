@@ -22,13 +22,15 @@ This cookbook has no dependencies.
 
 Usage
 --------
-### Include the default recipe
+### Include the default recipe and define in metadata
 Some recipe in your run list must include the iptables recipe:
 
 `include_recipe 'rackspace_iptables'`
 
+You must also add a `depends` line in the metadata for your cookbook.
+
 ### Define rules
-There are a few different ways to add iptables rules to your node. They all work by building the data structure `node['rackspace_iptables']['config']['chains']`. The data structure contains five hashes from which this cookbook will build a node's rules file: INPUT, OUTPUT, FORWARD, PREROUTING, and POSTROUTING.
+There are a few different ways to add iptables rules to your node, but they all work by building the data structure `node['rackspace_iptables']['config']['chains']`. The data structure contains five hashes from which this cookbook will build a node's rules file: 'INPU'T, 'OUTPUT', 'FORWARD', 'PREROUTING', and 'POSTROUTING'.
 
 ##### manual definition
 The following is an example of manually adding a rule to the data structure:
