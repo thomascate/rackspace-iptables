@@ -1,31 +1,122 @@
 # rackspace_iptables cookbook
 
-# Usage
-This cookbook will apply iptables rules to your environment based on a datastructure stored in the following location.  
-  
-node['rackspace_iptables']['chains']
+The rackspace_iptables cookbook manages all iptables rules for a node. The user adds rules by including the rackspace_iptables default recipe in some node-specific or environment-specific recipe (i.e. a 'rolebook') and defining rules via the data structure `node['rackspace_iptables']['config']['chains']`. If a user includes this cookbook but does not define any rules, the default recipe will overwrite existing iptables configuration with an empty rule list.
 
-# Attributes
-There are five chains that will be iterated over when the template is written. Each chain contains key/value pairs that
-represent the rule and the weight of each iptables entry. The rule is a string that will match an entry in their iptables config on disk. You can see how these rules should look by running 'iptables-save' on your server. The weight is the order they will be entered into the config. The higher the weight the earlier the rule will be interpeted.
-  
-An example rule would be 
-"-A INPUT -s 192.168.0.1/32 -i eth0 -j ACCEPT" => 100
-Which would enter that rule above any iptables rule with a weight of <100.
+Obviously this cookbook should not be used in environments where iptables is managed by other means (e.g. RackConnect).
 
-These are the chains that are currently read by this cookbook.
+Requirements
+------------
+Chef version 0.11.6+.
 
-default['rackspace_iptables']['chains']['INPUT'] = {}
-default['rackspace_iptables']['chains']['OUTPUT'] = {}
-default['rackspace_iptables']['chains']['FORWARD'] = {}
-default['rackspace_iptables']['chains']['PREROUTING'] = {}
-default['rackspace_iptables']['chains']['POSTROUTING'] = {}
-  
-  
-To update add a rule within a cookbook without destroying the whole chain, do something like this.
+## Platforms
+This cookbook has been tested on:
 
-node.default['rackspace_iptables']['chains']['INPUT']['-A INPUT -p tcp -m tcp --dport 80 -j ACCEPT'] = 50
+* Debian 7.2
+* Ubuntu 12.04
+* CentOS 6.4
 
-# Author
+It may or may not behave as expected on other versions of these distributions.
+
+## Cookbooks
+This cookbook has no dependencies.
+
+Usage
+------------
+#3# Include the default recipe
+Some recipe in your run list must include the iptables recipe:
+
+`include_recipe 'rackspace_iptables'`
+
+### Define rules
+There are a few different ways to add iptables rules to your node. They all work by building the data structure `node['rackspace_iptables']['config']['chains']`. The data structure contains five hashes from which this cookbook will build a node's rules file: INPUT, OUTPUT, FORWARD, PREROUTING, and POSTROUTING.
+
+##### manual definition
+The following is an example of manually adding a rule to the data structure:
+
+`node['rackspace_iptables']['config']['chains']['INPUT']['-s 10.0.0.1 -p tcp --dport 22 -j ACCEPT'] = { weight: 50, comment: 'allow ssh' }`
+
+At a minimum you must define a weight for each rule; this is what the cookbook uses to order the rules. Rules with a higher weight will appear *before* rules with a lower weight. Rule comments are optional.
+
+For example, you may define the following two rules:
+
+```
+node['rackspace_iptables']['config']['chains']['INPUT']['-s 10.0.0.1 -p tcp --dport 22 -j ACCEPT'] = { weight: 50, comment: 'allow ssh' }
+node['rackspace_iptables']['config']['chains']['INPUT']['-s 10.0.0.1 -p tcp --dport 21 -j ACCEPT'] = { weight: 51 }
+```
+
+They will be written to the iptables rules file as follows:
+
+```
+-A INPUT -s 10.0.0.1 -p tcp --dport 21 -j ACCEPT
+-A INPUT -s 10.0.0.1 -p tcp --dport 22 -j ACCEPT -m comment --comment "allow ssh"
+```
+
+##### convenience function
+You may use the following convenience function to more succinctly define rules:
+
+`add_iptables_rule('INPUT', '-s 10.0.0.1 -p tcp --dport 22 -j ACCEPT', 50, 'allow ssh')`
+
+As with manual specifications, you may omit comments. Unlike manual specifications, you may also omit weight:
+
+```
+add_iptables_rule('INPUT', '-s 10.0.0.1 -p tcp --dport 22 -j ACCEPT')
+add_iptables_rule('INPUT', '-s 10.0.0.1 -p tcp --dport 21 -j ACCEPT', 51)
+```
+
+The function will use a *default weight of 50* for calls that do not pass in a weight, so from the example above, the cookbook will add the two rules in same order as in the example for manual definitions (port 21 rule appears first).
+
+Note that you cannot include a comment while ommitting weight.
+
+##### search for nodes 
+Oftentimes you will want to allow access to/from other nodes controlled by your Chef server based on certain criteria. There is also a convenience function for this:
+
+`search_add_iptables_rules('node:*web*', 'INPUT', '-p tcp --dport 3306 -j ACCEPT', 70, 'web nodes')`
+
+This will perform a Chef `search` and return all nodes whose names match `*web*`. If the search returns two web nodes whose IP addresses are 1.1.1.1 and 1.1.1.2, the cookbook will add the following two rules:
+
+```
+-A INPUT -s 1.1.1.1 -p tcp --dport 3306 -j ACCEPT -m comment --comment "web nodes"
+-A INPUT -s 1.1.1.2 -p tcp --dport 3306 -j ACCEPT -m comment --comment "web nodes"
+```
+
+Note that these rules will have the same weight as each other (70), so the cookbook may produce them in any order relative to each other. In a common scenario, you may want to deny MySQL access to any other nodes, so you would define a rule with weight < 70 (manually or using `add_iptables_rule`) that denys connections to port 3306.
+
+If you want to add multiple rules for each node returned in a search, you may pass an array of rules to the function rather than a single string:
+
+`search_add_iptables_rules('node:*web*', 'INPUT', ['-p tcp --dport 3306 -j ACCEPT', '-p tcp --dport 22 -j ACCEPT'], 70, 'web nodes')`
+
+This avoids searching the Chef server an unnecessary number of times.
+
+
+Please read the `add_iptables_rule` and `search_add_iptables_rules` functions in `libraries/helpers.rb` to determine if they satisfy your use case. If not, you can manually define your rules.
+
+Recipes
+------------
+## default
+
+* Uninstalls 'ufw' if installed (e.g. on Ubuntu)
+* Installs iptables packages if not installed
+* Builds the iptables rules file from `node['rackspace_iptables']['config']['chains']`
+* Loads iptables rules if not loaded or if rules file has changed
+
+License & Authors
+------------
 
 Author:: Thomas Cate (thomas.cate@rackspace.com)
+Author:: Kent Shultz (kent.shultz@rackspace.com)
+
+```text
+Copyright 2014, Rackspace, US Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
