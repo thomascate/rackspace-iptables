@@ -33,20 +33,20 @@ You must also add a `depends` line in the metadata for your cookbook.
 There are a few different ways to add iptables rules to your node, but they all work by building the data structure `node['rackspace_iptables']['config']['chains']`. The data structure contains five hashes from which this cookbook will build a node's rules file: 'INPU'T, 'OUTPUT', 'FORWARD', 'PREROUTING', and 'POSTROUTING'.
 
 ##### manual definition
-The following is an example of manually adding a rule to the data structure:
+You may manually add rules to the data structure in the following way:
 
 `node['rackspace_iptables']['config']['chains']['INPUT']['-s 10.0.0.1 -p tcp --dport 22 -j ACCEPT'] = { weight: 50, comment: 'allow ssh' }`
 
 At a minimum you must define a weight for each rule; this is what the cookbook uses to order the rules. Rules with a higher weight will appear *before* rules with a lower weight. Rule comments are optional.
 
-For example, you may define the following two rules:
+For example, if you define the following two rules:
 
 ```
 node['rackspace_iptables']['config']['chains']['INPUT']['-s 10.0.0.1 -p tcp --dport 22 -j ACCEPT'] = { weight: 50, comment: 'allow ssh' }
 node['rackspace_iptables']['config']['chains']['INPUT']['-s 10.0.0.1 -p tcp --dport 21 -j ACCEPT'] = { weight: 51 }
 ```
 
-They will be written to the iptables rules file as follows:
+they will be written to the iptables rules file as follows:
 
 ```
 -A INPUT -s 10.0.0.1 -p tcp --dport 21 -j ACCEPT
@@ -70,18 +70,18 @@ The function will use a *default weight of 50* for calls that do not pass in a w
 Note that you cannot include a comment while ommitting weight.
 
 ##### search for nodes 
-Oftentimes you will want to allow access to/from other nodes controlled by your Chef server based on certain criteria. There is also a convenience function for this:
+Oftentimes you will want to allow access to/from other specific nodes controlled by your Chef server. There is also a convenience function for this:
 
 `search_add_iptables_rules('node:*web*', 'INPUT', '-p tcp --dport 3306 -j ACCEPT', 70, 'web nodes')`
 
-This will perform a Chef `search` and return all nodes whose names match `*web*`. If the search returns two web nodes whose IP addresses are 1.1.1.1 and 1.1.1.2, the cookbook will add the following two rules:
+This will perform a Chef `search` for all nodes whose names match `*web*`. If the search returns two nodes whose IP addresses are 1.1.1.1 and 1.1.1.2, the cookbook will add the following two rules:
 
 ```
 -A INPUT -s 1.1.1.1 -p tcp --dport 3306 -j ACCEPT -m comment --comment "web nodes"
 -A INPUT -s 1.1.1.2 -p tcp --dport 3306 -j ACCEPT -m comment --comment "web nodes"
 ```
 
-Note that these rules will have the same weight as each other (70), so the cookbook may produce them in any order relative to each other. In a common scenario, you may want to deny MySQL access to any other nodes, so you would define a rule with weight < 70 (manually or using `add_iptables_rule`) that denys connections to port 3306.
+Note that these rules will have the same weight as each other (70), and so the cookbook may produce them in any order relative to each other. In a common scenario, you may want to supplement these rules with one that denies MySQL access to any other nodes. You would accomplish this by defining a rule with weight < 70 (manually or using `add_iptables_rule`) that denies connections to port 3306.
 
 If you want to add multiple rules for each node returned in a search, you may pass an array of rules to the function rather than a single string:
 
