@@ -1,9 +1,9 @@
 include_recipe 'rackspace_iptables'
 
 # manually add with weight and comment
-node.default['rackspace_iptables']['config']['chains']['INPUT']['-s 10.0.0.1/32 -j ACCEPT'] = {weight: 1, comment: 'foo'}
+node.default['rackspace_iptables']['config']['chains']['INPUT']['-s 10.0.0.1/32 -j ACCEPT'] = { weight: 1, comment: 'foo' }
 # manually add with comment only
-node.default['rackspace_iptables']['config']['chains']['INPUT']['-s 10.0.0.2/32 -j ACCEPT'] = {weight: 1}
+node.default['rackspace_iptables']['config']['chains']['INPUT']['-s 10.0.0.2/32 -j ACCEPT'] = { weight: 1 }
 
 add_iptables_rule 'INPUT', '-s 10.0.0.4 -j ACCEPT'
 add_iptables_rule 'INPUT', '-s 10.0.0.5 -j ACCEPT', 80

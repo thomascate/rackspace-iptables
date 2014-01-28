@@ -20,13 +20,13 @@ module RackspaceIptables
   # convenience functions for building iptables rules in Rolebooks
   module Helpers
     # find servers to/from which to configure access
-    def add_iptables_rule(chain, rule, weight=50, comment=nil)
+    def add_iptables_rule(chain, rule, weight = 50, comment = nil)
       node.default['rackspace_iptables']['config']['chains'][chain][rule]['weight'] = weight
       node.default['rackspace_iptables']['config']['chains'][chain][rule]['comment'] = comment if comment
     end
 
-    def search_add_iptables_rules(search_str, chain, rules_to_add, weight=50, comment=search_str)
-      unless Chef::Config['solo']
+    def search_add_iptables_rules(search_str, chain, rules_to_add, weight = 50, comment = search_str)
+      if !Chef::Config['solo']
         rules = {}
         nodes = search('node', search_str) || []
         nodes.map! do |member|
@@ -41,15 +41,15 @@ module RackspaceIptables
               member['ipaddress']
             end
           end
-	  # when passing a single rule, user may use a string instead of an array
+          # when passing a single rule, user may use a string instead of an array
           rules_to_add = [rules_to_add] if rules_to_add.class == String
           rules_to_add.each do |rule|
-            rules["-s #{server_ip}/32 " << rule] = {comment: comment, weight: weight}
-	  end
-	end
-	rules.each { |rule,val| node.default['rackspace_iptables']['config']['chains'][chain][rule] = val }
+            rules["-s #{server_ip}/32 " << rule] = { comment: comment, weight: weight }
+          end
+        end
+        rules.each { |rule, val| node.default['rackspace_iptables']['config']['chains'][chain][rule] = val }
       else
-        Chef::Log.warn "Running Chef Solo; doing nothing for function call to add_rules_for_nodes"
+        Chef::Log.warn 'Running Chef Solo; doing nothing for function call to add_rules_for_nodes'
       end
     end
   end
