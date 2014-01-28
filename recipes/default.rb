@@ -16,8 +16,8 @@
 # limitations under the License.
 #
 
-case node['platform']
-when 'ubuntu', 'debian'
+case node['platform_family']
+when 'debian'
 
   package 'ufw' do
     action :remove
@@ -27,7 +27,7 @@ when 'ubuntu', 'debian'
   service_name = 'iptables-persistent'
   rules_file = '/etc/iptables/rules.v4'
 
-when 'redhat', 'centos', 'amazon', 'scientific'
+when 'rhel'
 
   service_name = 'iptables'
   rules_file = '/etc/sysconfig/iptables'
@@ -58,5 +58,7 @@ template rules_file do
 end
 
 service service_name do
+  supports status: true, restart: true 
+  status_command "iptables -L | egrep -v '^(Chain|target|$)'" if node['platform_family'] == 'debian'
   action :start
 end

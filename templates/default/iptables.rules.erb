@@ -3,15 +3,15 @@
 :OUTPUT ACCEPT
 :POSTROUTING ACCEPT
 <%unless @PREROUTING.nil? -%>
-<%  preroutingSorted = @PREROUTING.sort_by {|key,value| value['weight']}.reverse %>
+<%  preroutingSorted = @PREROUTING.sort_by { |key,value| [value['weight'], key] }.reverse %>
 <%  preroutingSorted.each do |rule| -%> 
--A PREROUTING <%=rule[0]%> -m comment --comment "<%=rule[1]['comment']%>"
+-A PREROUTING <%=rule[0]%> <%="-m comment --comment \"#{rule[1]['comment']}\"" if rule[1]['comment']%>
 <%  end -%>
 <%end -%>
 <%unless @POSTROUTING.nil? -%>
-<%  postroutingSorted = @POSTROUTING.sort_by {|key,value| value['weight']}.reverse %>
+<%  postroutingSorted = @POSTROUTING.sort_by { |key,value| [value['weight'], key] }.reverse %>
 <%  postroutingSorted.each do |rule| -%> 
--A POSTROUTING <%=rule[0]%> -m comment --comment "<%=rule[1]['comment']%>"
+-A POSTROUTING <%=rule[0]%> <%="-m comment --comment \"#{rule[1]['comment']}\"" if rule[1]['comment']%>
 <%  end -%>
 <%end -%>
 COMMIT
@@ -20,21 +20,21 @@ COMMIT
 :FORWARD ACCEPT
 :OUTPUT ACCEPT
 <%unless @INPUT.nil? -%>
-<%  inputSorted = @INPUT.sort_by {|key,value| value['weight']}.reverse %>
+<%  inputSorted = @INPUT.sort_by { |key,value| [value['weight'], key] }.reverse %>
 <%  inputSorted.each do |rule| -%> 
 -A INPUT <%=rule[0]%> <%="-m comment --comment \"#{rule[1]['comment']}\"" if rule[1]['comment']%>
 <%  end -%>
 <%end -%>
 <%unless @FORWARD.nil? -%>
-<%  forwardSorted = @FORWARD.sort_by {|key,value| value['weight']}.reverse %>
+<%  forwardSorted = @FORWARD.sort_by { |key,value| [value['weight'], key] }.reverse %>
 <%  forwardSorted.each do |rule| -%> 
--A FORWARD <%=rule[0]%> -m comment --comment "<%=rule[1]['comment']%>"
+-A FORWARD <%=rule[0]%> <%="-m comment --comment \"#{rule[1]['comment']}\"" if rule[1]['comment']%>
 <%  end -%>
 <%end -%>
 <%unless @OUTPUT.nil? -%>
-<%  outputSorted = @OUTPUT.sort_by {|key,value| value['weight']}.reverse %>
+<%  outputSorted = @OUTPUT.sort_by { |key,value| [value['weight'], key] }.reverse %>
 <%  outputSorted.each do |rule| -%> 
--A OUTPUT <%=rule[0]%> -m comment --comment "<%=rule[1]['comment']%>"
+-A OUTPUT <%=rule[0]%> <%="-m comment --comment \"#{rule[1]['comment']}\"" if rule[1]['comment']%>
 <%  end -%>
 <%end -%>
 COMMIT
