@@ -1,6 +1,6 @@
 #
-# Cookbook Name:: rackspace-iptables
-# Attributes:: rackspace-iptables
+# Cookbook Name:: rackspace_iptables
+# Attributes:: rackspace_iptables
 #
 # Copyright 2013 Rackspace
 #
@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-default['rackspace-iptables']['chains']['INPUT'] = {}
-default['rackspace-iptables']['chains']['OUTPUT'] = {}
-default['rackspace-iptables']['chains']['FORWARD'] = {}
-default['rackspace-iptables']['chains']['PREROUTING'] = {}
-default['rackspace-iptables']['chains']['POSTROUTING'] = {}
-
+default['rackspace_iptables']['templates_cookbook']['rules'] = 'rackspace_iptables'
+default['rackspace_iptables']['config']['chains']['INPUT'] = {}
+default['rackspace_iptables']['config']['chains']['OUTPUT'] = {}
+default['rackspace_iptables']['config']['chains']['FORWARD'] = {}
+default['rackspace_iptables']['config']['chains']['PREROUTING'] = {}
+default['rackspace_iptables']['config']['chains']['POSTROUTING'] = {}

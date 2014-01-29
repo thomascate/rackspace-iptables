@@ -2,24 +2,39 @@
 :PREROUTING ACCEPT 
 :OUTPUT ACCEPT
 :POSTROUTING ACCEPT
-<%@PREROUTING.each do |rule| -%>
-<%=rule[0]%>
-<% end -%>
-<%@POSTROUTING.each do |rule| -%>
-<%=rule[0]%>
-<% end -%>
+<%unless @PREROUTING.nil? -%>
+<%  preroutingSorted = @PREROUTING.sort_by { |key,value| [value['weight'], key] }.reverse %>
+<%  preroutingSorted.each do |rule| -%> 
+-A PREROUTING <%=rule[0]%> <%="-m comment --comment \"#{rule[1]['comment']}\"" if rule[1]['comment']%>
+<%  end -%>
+<%end -%>
+<%unless @POSTROUTING.nil? -%>
+<%  postroutingSorted = @POSTROUTING.sort_by { |key,value| [value['weight'], key] }.reverse %>
+<%  postroutingSorted.each do |rule| -%> 
+-A POSTROUTING <%=rule[0]%> <%="-m comment --comment \"#{rule[1]['comment']}\"" if rule[1]['comment']%>
+<%  end -%>
+<%end -%>
 COMMIT
 *filter
 :INPUT ACCEPT
 :FORWARD ACCEPT
 :OUTPUT ACCEPT
-<%@INPUT.each do |rule| -%>
-<%=rule[0]%>
-<% end -%>
-<%@FORWARD.each do |rule| -%>
-<%=rule[0]%>
-<% end -%>
-<%@OUTPUT.each do |rule| -%>
-<%=rule[0]%>
-<% end -%>
+<%unless @INPUT.nil? -%>
+<%  inputSorted = @INPUT.sort_by { |key,value| [value['weight'], key] }.reverse %>
+<%  inputSorted.each do |rule| -%> 
+-A INPUT <%=rule[0]%> <%="-m comment --comment \"#{rule[1]['comment']}\"" if rule[1]['comment']%>
+<%  end -%>
+<%end -%>
+<%unless @FORWARD.nil? -%>
+<%  forwardSorted = @FORWARD.sort_by { |key,value| [value['weight'], key] }.reverse %>
+<%  forwardSorted.each do |rule| -%> 
+-A FORWARD <%=rule[0]%> <%="-m comment --comment \"#{rule[1]['comment']}\"" if rule[1]['comment']%>
+<%  end -%>
+<%end -%>
+<%unless @OUTPUT.nil? -%>
+<%  outputSorted = @OUTPUT.sort_by { |key,value| [value['weight'], key] }.reverse %>
+<%  outputSorted.each do |rule| -%> 
+-A OUTPUT <%=rule[0]%> <%="-m comment --comment \"#{rule[1]['comment']}\"" if rule[1]['comment']%>
+<%  end -%>
+<%end -%>
 COMMIT
