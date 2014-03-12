@@ -34,9 +34,11 @@ when 'rhel'
 
 end
 
-package package_name do
-  action :install
-  only_if { package_name }
+if defined?(package_name)
+  package package_name do
+    action :install
+    only_if { package_name }
+  end
 end
 
 template rules_file do
